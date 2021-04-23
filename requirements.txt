@@ -1,0 +1,5 @@
+rasterio==1.2.0
+zappa==0.52.0
+pg8000==1.18.0
+SQLAlchemy==1.4.0
+
