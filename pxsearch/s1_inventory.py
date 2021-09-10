@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import tempfile
 import traceback
-
+# import csv
 import boto3
 import dateutil
 import pytz
@@ -16,7 +16,7 @@ import rasterio
 import sentry_sdk
 import structlog
 
-from pxsearch.const import INVENTORY_BUCKET_NAME, TILEINFO_BODY_KEY, TILE_INFO_FILE, BUCKET_NAME
+from pxsearch.s1_const import INVENTORY_BUCKET_NAME, TILEINFO_BODY_KEY, TILE_INFO_FILE, BUCKET_NAME
 
 # Setup timezone for timestamp parsing.
 UTC = pytz.timezone('UTC')
@@ -55,7 +55,7 @@ def parse_s3_sentinel_1_inventory():
             with gzip.open(csvgz.name, 'rb') as fl:
                 for line in fl:
                     # Add prefix to unique list.
-                    prefixes.add('/'.join(str(line).replace('"', '').split(',')[1].split('/')[:7]) + '/')
+                    prefixes.add('/'.join(str(line).replace('"', '').split(',')[1].split('/')[:7]) + '/')  # substitute per csv libririe methods
             logger.info('Found {} unique prefixes.'.format(len(prefixes)))
             # Setup s1tiles from unique prefix list.
             batch = []
@@ -110,44 +110,39 @@ def ingest_s1_tile_from_prefix(tile_prefix, client=None, commit=True):
     print("tileinfo >> ", tileinfo)
 
 # Substitute per geopandas or shapely
-    # if 'footprint' in tileinfo:
-    #     footprint = OGRGeometry(str(tileinfo['footprint'])).geos
-    #     if not isinstance(footprint, MultiPolygon):
-    #         # Attempt conversion.
-    #         footprint = MultiPolygon(footprint, srid=footprint.srid)
-    #     # Set geom to none if tile data geom is not valid.
-    #     if not footprint.valid:
-    #         footprint = None
-    # else:
-    #     footprint = None
+    if 'footprint' in tileinfo:
+        footprint = OGRGeometry(str(tileinfo['footprint'])).geos
+        if not isinstance(footprint, MultiPolygon):
+            # Attempt conversion.
+            footprint = MultiPolygon(footprint, srid=footprint.srid)
+        # Set geom to none if tile data geom is not valid.
+        if not footprint.valid:
+            footprint = None
+    else:
+        footprint = None
 
     # # Register tile, log error if creation failed.
-    # stile = Sentinel1Tile(
-    #     product_name=tileinfo['id'],
-    #     prefix=tile_prefix,
-    #     mission_id=tileinfo['missionId'],
-    #     product_type=tileinfo['productType'],
-    #     mode=tileinfo['mode'],
-    #     polarization=tileinfo['polarization'],
-    #     start_time=UTC.localize(dateutil.parser.parse(tileinfo['startTime']), is_dst=True),
-    #     stop_time=UTC.localize(dateutil.parser.parse(tileinfo['stopTime']), is_dst=True),
-    #     absolute_orbit_number=tileinfo['absoluteOrbitNumber'],
-    #     mission_datatake_id=tileinfo['missionDataTakeId'],
-    #     product_unique_identifier=tileinfo['productUniqueIdentifier'],
-    #     sci_hub_id=tileinfo['sciHubId'],
-    #     footprint=footprint,
-    #     filename_map=tileinfo['filenameMap'],
-    # )
+    stile = Sentinel1Tile(
+        product_name=tileinfo['id'],
+        prefix=tile_prefix,
+        mission_id=tileinfo['missionId'],
+        product_type=tileinfo['productType'],
+        mode=tileinfo['mode'],
+        polarization=tileinfo['polarization'],
+        start_time=UTC.localize(dateutil.parser.parse(tileinfo['startTime']), is_dst=True),
+        stop_time=UTC.localize(dateutil.parser.parse(tileinfo['stopTime']), is_dst=True),
+        absolute_orbit_number=tileinfo['absoluteOrbitNumber'],
+        mission_datatake_id=tileinfo['missionDataTakeId'],
+        product_unique_identifier=tileinfo['productUniqueIdentifier'],
+        sci_hub_id=tileinfo['sciHubId'],
+        footprint=footprint,
+        filename_map=tileinfo['filenameMap'],
+    )
 
     # if commit:
     #     stile.save()
 
     # return stile
-
-
-#def parse_s3_sentinel_2_inventory():
-
-#def parse_landsat_inventory():
 
 def process_sentinel_sns_message(event, context):
     """
