@@ -1,1 +1,1 @@
-"""pxsearch module."""
+"""sqlalchemy submodule."""
