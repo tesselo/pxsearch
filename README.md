@@ -7,4 +7,17 @@ The restructuring of the project in this branch aims to:
 - Update our indexing processes using datasets from AWS S3 inventory;
 - Restructure the database using STAC specifications(https://stacspec.org/) and SqlAlchemy ORM;
 
+# Requirements
+
+´´´
+pip install -r ./requirements.txt
+´´´
+
+# Migrations
+Use alembic to have the migrations and latest version of the database.
+
+´´´
+alembic migration
+´´´
+
 Copyright 2021 Tesselo - Space Mosaic Lda. All rights reserved.
