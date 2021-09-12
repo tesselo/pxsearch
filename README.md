@@ -43,6 +43,19 @@ zappa invoke staging "pxsearch.app.main"
 
 ´´´
 alembic migration
-´´´
+```
+
+# Deploy staging
+
+```bash
+zappa update staging
+```
+
+# Invoke staging
+
+```bash
+zappa invoke staging "pxsearch.app.main"
+```
+
 
 Copyright 2021 Tesselo - Space Mosaic Lda. All rights reserved.
