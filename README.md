@@ -9,15 +9,34 @@ The restructuring of the project in this branch aims to:
 
 # Requirements
 
-´´´
-pip install -r ./requirements.txt
-´´´
+```bash
+make install
+```
+
+# Upgrade unpinned dependencies
+
+```bash
+make upgrade_dependencies
+```
 
 # Migrations
 Use alembic to have the migrations and latest version of the database.
 
-´´´
+```bash
 alembic migration
-´´´
+```
+
+# Deploy staging
+
+```bash
+zappa update staging
+```
+
+# Invoke staging
+
+```bash
+zappa invoke staging "pxsearch.app.main"
+```
+
 
 Copyright 2021 Tesselo - Space Mosaic Lda. All rights reserved.

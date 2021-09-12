@@ -1,0 +1,25 @@
+{
+  "staging": {
+    "app_function": "pxsearch.app",
+    "aws_region": "eu-central-1",
+    "apigateway_enabled": false,
+    "project_name": "pxsearch",
+    "runtime": "python3.8",
+    "s3_bucket": "pxsearch-staging",
+    "exclude": ["alembic/", "tests/"],
+    "environment_variables": {
+      "POSTGRES_HOST": "search-micro.cepyvetzz6ui.eu-central-1.rds.amazonaws.com",
+      "POSTGRES_DBNAME": "staging",
+      "POSGRES_PORT": "5432"
+    }
+  },
+  "production": {
+    "log_level": "WARNING",
+    "extends": "staging",
+    "project_name": "pxsearch",
+    "s3_bucket": "pxsearch-production",
+    "environment_variables": {
+      "POSTGRES_DBNAME": "production"
+    }
+  }
+}
