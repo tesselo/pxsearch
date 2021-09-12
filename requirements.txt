@@ -118,14 +118,23 @@ zipp==3.5.0
 # pip
 # setuptools
 alembic==1.7.1
-dotenv-cli==2.2.0
-GeoAlchemy2==0.9.4
+    # via -r requirements.in
+geoalchemy==0.7.2
+    # via -r requirements.in
 greenlet==1.1.1
+    # via sqlalchemy
 importlib-resources==5.2.2
-Mako==1.1.5
-MarkupSafe==2.0.1
-packaging==21.0
+    # via alembic
+mako==1.1.5
+    # via alembic
+markupsafe==2.0.1
+    # via mako
 psycopg2-binary==2.9.1
-pyparsing==2.4.7
-SQLAlchemy==1.4.23
+    # via -r requirements.in
+sqlalchemy==1.4.23
+    # via
+    #   -r requirements.in
+    #   alembic
+    #   geoalchemy
 zipp==3.5.0
+    # via importlib-resources
