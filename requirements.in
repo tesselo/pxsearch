@@ -1,0 +1,4 @@
+alembic
+geoalchemy
+psycopg2-binary
+sqlalchemy
