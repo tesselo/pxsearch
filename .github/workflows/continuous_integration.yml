@@ -39,6 +39,7 @@ jobs:
          python -m pip install --upgrade pip virtualenv
          virtualenv -p /usr/bin/python3 ./pxsearch-venv
          source ./pxsearch-venv/bin/activate
+         pip install setuptools==57.5.0
          pip install -r ./pxsearch/requirements.txt
 
   deploy-staging:
