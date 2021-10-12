@@ -14,9 +14,8 @@
     }
   },
   "production": {
-    "log_level": "WARNING",
     "extends": "staging",
-    "project_name": "pxsearch",
+    "log_level": "WARNING",
     "s3_bucket": "pxsearch-production",
     "environment_variables": {
       "POSTGRES_DBNAME": "production"
