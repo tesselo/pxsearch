@@ -60,6 +60,7 @@ class Item(BaseModel):  # type:ignore
     __table_args__ = {"schema": "data"}
 
     id = sa.Column(sa.VARCHAR(1024), nullable=False, primary_key=True)
+    description = sa.Column(sa.VARCHAR(300))
     stac_version = sa.Column(sa.VARCHAR(300))
     stac_extensions = sa.Column(sa.ARRAY(sa.VARCHAR(300)), nullable=True)
     geometry = sa.Column(
@@ -76,7 +77,7 @@ class Item(BaseModel):  # type:ignore
     )
     datetime = sa.Column(sa.TIMESTAMP(timezone=True), nullable=False)
     links = sa.Column(JSONB)
-
+    type = sa.Column(sa.VARCHAR(300), nullable=False)
 
 class PaginationToken(BaseModel):  # type:ignore
     """Pagination orm model."""

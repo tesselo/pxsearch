@@ -1,6 +1,6 @@
 import json
 
-from pxsearch.models.stac import Collection
+from pxsearch.models.stac import Collection, Item
 
 
 def test_load_collection(test_db_session):
