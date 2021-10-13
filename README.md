@@ -18,9 +18,9 @@ make install
 ```bash
 make upgrade_dependencies
 ```
-´´´
+```
 pip install -r ./requirements.txt
-´´´
+```
 
 # Migrations
 Use alembic to have the migrations and latest version of the database.
@@ -41,7 +41,7 @@ zappa update staging
 zappa invoke staging "pxsearch.app.main"
 ```
 
-´´´
+```
 alembic migration
 ```
 
