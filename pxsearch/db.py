@@ -7,7 +7,7 @@ user = os.environ.get("USER", "postgres")
 pw = os.environ.get("PASS", "")
 host = os.environ.get("HOST", "localhost")
 port = os.environ.get("PORT", "5432")
-dbname = os.environ.get("DBNAME", "pxsearch_test")
+dbname = os.environ.get("DBNAME", "pxsearch")
 url = f"postgresql://{user}:{pw}@{host}:{port}/{dbname}"
 
 metadata = MetaData()

@@ -1,6 +1,6 @@
 CLIENT_TYPE = "s3"
 PAGINATOR_LOOKUP = "list_objects"
-INGESTION_BATCH_SIZE = 10
+INGESTION_BATCH_SIZE = 2
 
 LS8_L2_BUCKET_NAME = "usgs-landsat"
 LS8_L2_PAGINATOR_BASE_PREFIX = "collection02/level-2/standard/oli-tirs/"

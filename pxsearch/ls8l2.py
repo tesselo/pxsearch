@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from multiprocessing import Pool
 
 import boto3
@@ -7,6 +8,8 @@ from sqlalchemy.orm import sessionmaker
 from pxsearch import const
 from pxsearch.db import engine
 from pxsearch.models.stac import Collection, Item
+
+DATETIME_RFC339 = "%Y-%m-%dT%H:%M:%S.%fZ"
 
 
 def get_db_session():
@@ -35,6 +38,15 @@ def get_item_from_key(key):
     item = item.decode("utf-8")
     item = json.loads(item)
     item["collection_id"] = item.pop("collection")
+    item["geometry"] = json.dumps(item.pop("geometry"))
+    item["datetime"] = datetime.strptime(
+        item["properties"]["datetime"], DATETIME_RFC339
+    )
+    item.pop("description")
+    # Ensure type is Feature.
+    item_type = item.pop("type")
+    if item_type != "Feature":
+        raise ValueError(f"Item type must be Feature, found {item_type}")
     return Item(**item)
 
 
