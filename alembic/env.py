@@ -1,9 +1,10 @@
 """Migration environment."""
-import os
 from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+
+from pxsearch.utils import get_connection_url
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -24,18 +25,6 @@ target_metadata = None
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-
-def get_connection_url() -> str:
-    """
-    Get connection URL from environment variables
-    (see environment variables set in docker-compose)
-    """
-    postgres_user = os.environ["POSTGRES_USER"]
-    postgres_pass = os.environ["POSTGRES_PASS"]
-    postgres_host = os.environ["POSTGRES_HOST"]
-    postgres_port = os.environ.get("POSTGRES_PORT", "5432")
-    postgres_dbname = os.environ["POSTGRES_DBNAME"]
-    return f"postgresql://{postgres_user}:{postgres_pass}@{postgres_host}:{postgres_port}/{postgres_dbname}"
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.
