@@ -1,3 +1,8 @@
+# VIEW is a query stored in the db. 
+# We can use/query a VIEW as a table. ~ virtual table
+# Based on: https://newbedev.com/how-to-create-an-sql-view-with-sqlalchemy
+# More references: https://docs.sqlalchemy.org/en/14/core/metadata.html
+
 import os
 from sqlalchemy import Table
 from sqlalchemy.ext.compiler import compiles
@@ -27,30 +32,19 @@ engine = create_engine(get_connection_url())
 # Instatiation of Metadata - a container object that keeps together many different features of a database (or multiple databases) being described.
 metadata = MetaData(engine)   
 
-#Colunas necessarias para search:   
-    # geojson,
-    # start=None,
-    # end=None,
-    # platforms=None,
-    # maxcloud=None,
-    # scene=None,
-    # sensor=None,
-    # level=None,
-    # limit=10,
-    # sort="sensing_time"
-
-# How to instantiate table imagery?
-table = "items"
-
-definition = select([
-    table.id.label('table_b_id'),
-    table.coupon_code,
-    table.number_of_rebought_items,
-]).select_from(table.__table__.outerjoin(TableA, table.generate_action == TableA.id))
-
+# To represent a table, use the Table class. 
+# Its two primary arguments are the table name, then the MetaData object which it will be associated with. 
+# The remaining positional arguments are mostly Column objects describing each column:
+t = Table('t',
+          metadata,
+          Column('id', Integer, primary_key=True),
+          Column('number', Integer))
+t.create()
+engine.execute(t.insert().values(id=1, number=3))
+engine.execute(t.insert().values(id=9, number=-3))
 
 # create view
-createview = CreateView('imagery', definition)
+createview = CreateView('viewname', t.select().where(t.c.id>5))
 engine.execute(createview)
 
 # reflect view and print result
