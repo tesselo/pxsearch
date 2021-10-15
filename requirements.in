@@ -1,6 +1,7 @@
 alembic
-geoalchemy
+geoalchemy2
 psycopg2-binary
 sqlalchemy
 zappa
-
+alembic-migration-fixtures
+pytest
