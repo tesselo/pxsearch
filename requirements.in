@@ -4,6 +4,3 @@ psycopg2-binary
 sqlalchemy
 zappa
 
-# Unsolved zappa restriction
-# https://github.com/zappa/Zappa/issues/1016
-troposphere<3
