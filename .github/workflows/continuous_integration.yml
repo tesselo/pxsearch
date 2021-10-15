@@ -41,10 +41,50 @@ jobs:
          source ./pxsearch-venv/bin/activate
          pip install setuptools==57.5.0
          pip install -r ./pxsearch/requirements.txt
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: [ python_dependencies ]
+    services:
+      postgres:
+        image: postgis/postgis:latest
+        env:
+          POSTGRES_DB: pxsearch
+          POSTGRES_PASSWORD: postgres_password
+          POSTGRES_USER: postgres_user
+        ports:
+          - 5432/tcp
+        # set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout pxsearch
+        uses: actions/checkout@v2
+        with:
+          path: ./pxsearch
+      - name: Attempt to use cache
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: ./pxsearch-venv
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt') }}
+      - name: Test
+        run: |
+          source ./pxsearch-venv/bin/activate
+          cd pxsearch && python -m pytest tests --alembic-folder=alembic
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_DBNAME: pxsearch
+          POSTGRES_USER: postgres_user
+          POSTGRES_PASS: postgres_password
+          POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
   deploy-staging:
     name: Deploy to Staging
-    needs: [python_dependencies]
+    needs: [python_dependencies, test]
     runs-on: ubuntu-latest
     if: contains('refs/heads/main', github.ref)
     steps:
@@ -69,7 +109,7 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    needs: [python_dependencies]
+    needs: [python_dependencies, test]
     runs-on: ubuntu-latest
     if: contains('yes', github.event.inputs.sure) && contains('workflow_dispatch', github.event_name)
     steps:
