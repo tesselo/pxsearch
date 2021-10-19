@@ -2,7 +2,6 @@
 # We can use/query a VIEW as a table. ~ virtual table
 # Based on: https://newbedev.com/how-to-create-an-sql-view-with-sqlalchemy
 # More references: https://docs.sqlalchemy.org/en/14/core/metadata.html
-
 import os
 from sqlalchemy import Table
 from sqlalchemy.ext.compiler import compiles
@@ -35,19 +34,38 @@ metadata = MetaData(engine)
 # To represent a table, use the Table class. 
 # Its two primary arguments are the table name, then the MetaData object which it will be associated with. 
 # The remaining positional arguments are mostly Column objects describing each column:
-t = Table('t',
+tb = Table('tb',
           metadata,
           Column('id', Integer, primary_key=True),
           Column('number', Integer))
-t.create()
-engine.execute(t.insert().values(id=1, number=3))
-engine.execute(t.insert().values(id=9, number=-3))
+tb.create()
+engine.execute(tb.insert().values(id=1, number=3))
+engine.execute(tb.insert().values(id=9, number=-3))
 
 # create view
-createview = CreateView('viewname', t.select().where(t.c.id>5))
+createview = CreateView('viewname', tb.select().where(tb.c.id>5))
 engine.execute(createview)
 
 # reflect view and print result
-v = Table('viewname', metadata, autoload=True)
+v = Table('viewname', metadata, autoload=True, schema="public")
 for r in engine.execute(v.select()):
     print(r)
+
+
+# Check tables, schemas and columns
+from sqlalchemy import inspect
+inspector = inspect(engine)
+schemas = inspector.get_schema_names()
+
+for schema in schemas:
+    print("schema: %s" % schema)
+    for table_name in inspector.get_table_names(schema=schema):
+        print("table:  %s" % table_name)
+        for column in inspector.get_columns(table_name, schema=schema):
+            print("Column: %s" % column)
+
+# OR
+# To get all info about db  
+metadata.reflect(engine) 
+# To get tables names
+metadata.tables.keys()
