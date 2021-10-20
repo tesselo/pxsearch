@@ -14,11 +14,11 @@ argcomplete==1.12.3
     # via zappa
 attrs==21.2.0
     # via pytest
-boto3==1.18.62
+boto3==1.18.65
     # via
     #   kappa
     #   zappa
-botocore==1.21.62
+botocore==1.21.65
     # via
     #   boto3
     #   s3transfer
@@ -62,7 +62,7 @@ packaging==21.0
     # via
     #   geoalchemy2
     #   pytest
-pep517==0.11.0
+pep517==0.12.0
     # via pip-tools
 pip-tools==6.4.0
     # via zappa
@@ -103,7 +103,7 @@ six==1.16.0
     #   cfn-flip
     #   python-dateutil
     #   zappa
-sqlalchemy==1.4.25
+sqlalchemy==1.4.26
     # via
     #   -r requirements.in
     #   alembic
@@ -119,7 +119,7 @@ tomli==1.2.1
     # via pep517
 tqdm==4.62.3
     # via zappa
-troposphere==3.0.3
+troposphere==3.1.0
     # via zappa
 urllib3==1.26.7
     # via
