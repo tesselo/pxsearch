@@ -1,0 +1,9 @@
+isort
+flake8
+lxml
+black
+pre-commit
+semgrep
+pytest
+pytest-cov
+
