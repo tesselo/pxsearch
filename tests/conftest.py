@@ -1,5 +1,6 @@
 import pytest
 from sqlalchemy import create_engine
+
 from pxsearch.utils import get_connection_url
 
 
@@ -9,4 +10,3 @@ def database_engine():
     yield engine
     engine.execute("DROP SCHEMA data CASCADE")
     engine.execute("DROP EXTENSION IF EXISTS postgis")
-
