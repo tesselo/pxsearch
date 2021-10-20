@@ -11,4 +11,8 @@ def get_connection_url() -> str:
     postgres_host = os.environ.get("POSTGRES_HOST", "localhost")
     postgres_port = os.environ.get("POSTGRES_PORT", "5432")
     postgres_dbname = os.environ.get("POSTGRES_DBNAME", "pxsearch")
-    return f"postgresql://{postgres_user}:{postgres_pass}@{postgres_host}:{postgres_port}/{postgres_dbname}"
+
+    return (
+        f"postgresql://{postgres_user}:{postgres_pass}@"
+        f"{postgres_host}:{postgres_port}/{postgres_dbname}"
+    )

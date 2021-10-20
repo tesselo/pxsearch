@@ -6,9 +6,10 @@ Create Date: 2020-02-09 13:03:09.336631
 
 """  # noqa
 import sqlalchemy as sa
-from alembic import op
 from geoalchemy2.types import Geometry
 from sqlalchemy.dialects.postgresql import JSONB
+
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision = "131aab4d9e49"
@@ -46,12 +47,15 @@ def upgrade():
         sa.Column("id", sa.VARCHAR(1024), nullable=False, primary_key=True),
         sa.Column("stac_version", sa.VARCHAR(300)),
         sa.Column("stac_extensions", sa.ARRAY(sa.VARCHAR(300)), nullable=True),
-        sa.Column("geometry", Geometry("POLYGON", srid=4326, spatial_index=True)),
+        sa.Column(
+            "geometry", Geometry("POLYGON", srid=4326, spatial_index=True)
+        ),
         sa.Column("bbox", sa.ARRAY(sa.NUMERIC), nullable=False),
         sa.Column("properties", JSONB),
         sa.Column("assets", JSONB),
-        sa.Column("collection_id", sa.VARCHAR(1024), nullable=False, index=True),
-        # These are usually in properties but defined as their own fields for indexing
+        sa.Column(
+            "collection_id", sa.VARCHAR(1024), nullable=False, index=True
+        ),
         sa.Column("datetime", sa.TIMESTAMP, nullable=False, index=True),
         sa.Column("links", JSONB, nullable=True),
         sa.ForeignKeyConstraint(["collection_id"], ["data.collections.id"]),
