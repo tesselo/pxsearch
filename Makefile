@@ -16,34 +16,42 @@ upgrade_dependencies: dev_install
 	pip-compile --upgrade --output-file ./requirements.txt requirements.in
 	pip-compile --upgrade --output-file ./dev_requirements.txt dev_requirements.in
 
-
 #
-#   Extended Reports
+#   Code Checks
 #
-.PHONY: mypy coverage
+.PHONY: pre-commit check coverage
 
-mypy:
-	python -m mypy --config-file ./mypy.ini giges --txt-report .mypy_reports
-	cat .mypy_reports/index.txt
+pre-commit:
+	pre-commit run -a
 
 coverage:
 	pytest --alembic-folder=alembic --cov=pxsearch --cov-report term --cov-report html:reports/coverage-integration --cov-report term:skip-covered
 
 
-#
-#   Code Checks
-#
-.PHONY: pre-commit check semgrep
-
-pre-commit:
-	pre-commit run -a
-
 check: pre-commit coverage
 
-semgrep:
+#
+#   Extended Reports
+#
+.PHONY: smells security complexity check-advanced check-extended
+
+smells:
 	semgrep --config=p/r2c-ci --config=p/flask
 
-check-extended: check semgrep
+security:
+	bandit -r pxsearch
+
+complexity:
+	wily build pxsearch
+	wily report pxsearch
+
+doc-style:
+	pydocstyle pxsearch
+
+check-advanced: smells security
+check-picky: complexity doc-style
+check-extended: check check-advanced check-picky
+
 #
 #   Code Checks auto-fix
 #
