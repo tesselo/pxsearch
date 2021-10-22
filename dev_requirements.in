@@ -3,7 +3,9 @@ flake8
 lxml
 black
 pre-commit
-semgrep
+semgrep<0.65.0
 pytest
 pytest-cov
-
+bandit
+wily
+pydocstyle

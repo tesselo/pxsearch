@@ -7,19 +7,65 @@ The restructuring of the project in this branch aims to:
 - Update our indexing processes using datasets from AWS S3 inventory;
 - Restructure the database using STAC specifications(https://stacspec.org/) and SqlAlchemy ORM;
 
-# Requirements
+## Install runtime dependencies
 
-```bash
+```
 make install
 ```
 
-# Upgrade unpinned dependencies
 
-```bash
+## Install development dependencies
+
+```
+# This will also install the runtime dependencies
+make dev_install
+```
+
+## Upgrade unpinned dependencies
+
+```
 make upgrade_dependencies
 ```
+
+## Pre-commit hooks
+
+We are using <https://pre-commit.com/> hooks, they are specified in the file `.pre-commit-config.yaml` and installed when you run `make dev_install`.
+If the pre-commit configuration file is changed, remember to run `make dev_install` or `pre-commit install` again.
+
+To manually force run the pre-commit tasks, you can type:
+
+```bash
+make pre-commit
 ```
-pip install -r ./requirements.txt
+
+## Make targets
+
+The `Makefile` is a good resource to see how things are done.
+Some of these targets include:
+
+### Common checks before opening a PR
+
+Includes the pre-commit hooks and running the tests with 
+code coverage reports.
+
+```bash
+make check
+```
+
+
+### Extended checks to know more about the code
+
+Includes security checks and other code smells.
+
+```bash
+make check-advanced
+```
+
+### Picky checks to be a code snob
+
+Includes code complexity and documentation style checks.
+```bash
+make check-picky
 ```
 
 # Migrations
