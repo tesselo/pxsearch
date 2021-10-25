@@ -12,3 +12,14 @@ def test_load_collection(test_db_session):
     expected = [collection]
     result = test_db_session.query(Collection).all()
     assert result == expected
+
+
+def test_load_item(test_db_session):
+    with open("tests/data/test_item.json") as src:
+        data = json.load(src)
+    item = Item(**data)
+    test_db_session.add(item)
+    test_db_session.commit()
+    expected = [item]
+    result = test_db_session.query(Item).all()
+    assert result == expected
