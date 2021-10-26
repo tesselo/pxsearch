@@ -11,6 +11,15 @@
       "POSTGRES_HOST": "search-micro.cepyvetzz6ui.eu-central-1.rds.amazonaws.com",
       "POSTGRES_DBNAME": "staging",
       "POSGRES_PORT": "5432"
+    },
+    "events": {
+      "function": "pxsearch.ls8l2.process_ls_sns_message",
+      "event_source": {
+        "arn": "arn:aws:sns:us-west-2:673253540267:public-c2-notify",
+        "events": [
+          "sns:Publish"
+        ]
+      }
     }
   },
   "production": {
