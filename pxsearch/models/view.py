@@ -10,15 +10,19 @@ def create_imagery_view():
     # Query definition
     definition = """CREATE OR REPLACE VIEW data.imagery AS
     SELECT collection_id,
+    id AS "product_id",
     geometry AS "bbox",
     datetime::timestamp AS "sensing_time",
-    properties->>'platform' AS "platform",
+    properties->>'granule_id' AS "granule_id",
+    properties->>'mgrs_tile' AS "mgrs_tile",
+    properties->>'platform' AS "spacecraft_id",
     properties->>'instruments' AS "sensor_id",
     properties->>'proj:transform' AS "proj_transform",
     properties->>'landsat:wrs_row' AS "wrs_row",
     properties->>'landsat:wrs_path' AS "wrs_path",
-    properties->>'landsat:cloud_cover_land' AS "cloud_cover",
-    y.x->'href' AS "base_url" FROM data.items jt,
+    CAST(properties->>'landsat:cloud_cover_land' AS NUMERIC) AS "cloud_cover",
+    y.x->'href' AS "base_url"
+    FROM data.items jt,
     LATERAL (SELECT jsonb_array_elements(links) x) y
     WHERE y.x @> '{"rel": "self"}';
     """
