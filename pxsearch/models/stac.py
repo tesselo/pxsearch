@@ -77,6 +77,7 @@ class Item(BaseModel):  # type:ignore
     datetime = sa.Column(sa.TIMESTAMP(timezone=True), nullable=False)
     links = sa.Column(JSONB)
 
+
 class PaginationToken(BaseModel):  # type:ignore
     """Pagination orm model."""
 

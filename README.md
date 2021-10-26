@@ -1,5 +1,5 @@
 # PxSearch API
-The PxSearch is an API for internal services created to allow search and requests of satellite image data. 
+The PxSearch is an API for internal services created to allow search and requests of satellite image data.
 
 # Objectives
 The restructuring of the project in this branch aims to:
@@ -45,7 +45,7 @@ Some of these targets include:
 
 ### Common checks before opening a PR
 
-Includes the pre-commit hooks and running the tests with 
+Includes the pre-commit hooks and running the tests with
 code coverage reports.
 
 ```bash
@@ -71,8 +71,10 @@ make check-picky
 # Migrations
 Use alembic to have the migrations and latest version of the database.
 
+To run the migrations, use
+
 ```bash
-alembic migration
+alembic upgrade head
 ```
 
 # Deploy staging
