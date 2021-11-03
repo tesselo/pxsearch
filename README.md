@@ -1,5 +1,5 @@
 # PxSearch API
-The PxSearch is an API for internal services created to allow search and requests of satellite image data. 
+The PxSearch is an API for internal services created to allow search and requests of satellite image data.
 
 # Objectives
 The restructuring of the project in this branch aims to:
@@ -45,7 +45,7 @@ Some of these targets include:
 
 ### Common checks before opening a PR
 
-Includes the pre-commit hooks and running the tests with 
+Includes the pre-commit hooks and running the tests with
 code coverage reports.
 
 ```bash
@@ -101,6 +101,15 @@ zappa update staging
 
 ```bash
 zappa invoke staging "pxsearch.app.main"
+```
+
+# DB Setup
+Create a DB install the postgis extension.
+
+Create the LS Collections
+```python
+from pxsearch.lsl2 import create_collections
+create_collections()
 ```
 
 

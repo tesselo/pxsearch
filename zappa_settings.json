@@ -1,6 +1,6 @@
 {
   "staging": {
-    "app_function": "pxsearch.app",
+    "app_function": "pxsearch.app.main",
     "aws_region": "eu-central-1",
     "apigateway_enabled": false,
     "project_name": "pxsearch",
@@ -12,15 +12,17 @@
       "POSTGRES_DBNAME": "staging",
       "POSGRES_PORT": "5432"
     },
-    "events": {
-      "function": "pxsearch.ls8l2.process_ls_sns_message",
-      "event_source": {
-        "arn": "arn:aws:sns:us-west-2:673253540267:public-c2-notify",
-        "events": [
-          "sns:Publish"
-        ]
+    "events": [
+      {
+        "function": "pxsearch.lsl2.process_ls_sns_payload",
+        "event_source": {
+          "arn": "arn:aws:sns:us-west-2:673253540267:public-c2-notify",
+          "events": [
+            "sns:Publish"
+          ]
+        }
       }
-    }
+    ]
   },
   "production": {
     "log_level": "WARNING",
