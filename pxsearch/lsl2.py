@@ -1,7 +1,7 @@
+import concurrent
 import json
 import logging
 from datetime import datetime
-from multiprocessing import Pool
 
 import boto3
 from sqlalchemy.ext.compiler import compiles
@@ -136,12 +136,12 @@ def process_batch(batch):
     Commit a list of items to the database.
     """
     logger.info("Downloading item data for batch")
-    # Get item data.
-    if len(batch) > 1:
-        with Pool(min(const.INGESTION_BATCH_SIZE, len(batch))) as pl:
-            items = pl.map(build_item_from_key, batch)
-    else:
-        items = [build_item_from_key(batch[0])]
+    # Retrieve item data in parallell.
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        futures = [
+            executor.submit(build_item_from_key, item) for item in batch
+        ]
+    items = [dat.result() for dat in futures]
     logger.info("Downloading item data for batch complete")
     # Save items to DB.
     logger.info(f"Commiting {len(items)} items")
