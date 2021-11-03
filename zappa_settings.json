@@ -30,7 +30,7 @@
     "project_name": "pxsearch",
     "s3_bucket": "pxsearch-production",
     "environment_variables": {
-      "POSTGRES_DBNAME": "production"
+      "POSTGRES_DBNAME": "prod"
     }
   }
 }
