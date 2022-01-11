@@ -10,15 +10,15 @@ alembic==1.6.5
     #   alembic-migration-fixtures
 alembic-migration-fixtures==0.1.0
     # via -r requirements.in
-argcomplete==1.12.3
+argcomplete==2.0.0
     # via zappa
-attrs==21.2.0
+attrs==21.4.0
     # via pytest
-boto3==1.20.8
+boto3==1.20.32
     # via
     #   kappa
     #   zappa
-botocore==1.23.8
+botocore==1.23.32
     # via
     #   boto3
     #   s3transfer
@@ -26,7 +26,7 @@ certifi==2021.10.8
     # via requests
 cfn-flip==1.3.0
     # via troposphere
-charset-normalizer==2.0.7
+charset-normalizer==2.0.10
     # via requests
 click==8.0.3
     # via
@@ -37,7 +37,7 @@ durationpy==0.5
     # via zappa
 future==0.18.2
     # via zappa
-geoalchemy2==0.9.4
+geoalchemy2==0.10.2
     # via -r requirements.in
 greenlet==1.1.2
     # via sqlalchemy
@@ -47,7 +47,7 @@ idna==3.3
     # via requests
 iniconfig==1.1.1
     # via pytest
-iso8601==1.0.0
+iso8601==1.0.2
     # via -r requirements.in
 jmespath==0.10.0
     # via
@@ -68,11 +68,13 @@ pep517==0.12.0
     # via pip-tools
 pip-tools==6.4.0
     # via zappa
-placebo==0.10.0
-    # via kappa
+placebo==0.9.0
+    # via
+    #   -r requirements.in
+    #   kappa
 pluggy==1.0.0
     # via pytest
-psycopg2-binary==2.9.2
+psycopg2-binary==2.9.3
     # via -r requirements.in
 py==1.11.0
     # via pytest
@@ -96,7 +98,7 @@ pyyaml==6.0
     #   cfn-flip
     #   kappa
     #   zappa
-requests==2.26.0
+requests==2.27.1
     # via zappa
 s3transfer==0.5.0
     # via boto3
@@ -105,7 +107,7 @@ six==1.16.0
     #   cfn-flip
     #   python-dateutil
     #   zappa
-sqlalchemy==1.4.27
+sqlalchemy==1.4.29
     # via
     #   -r requirements.in
     #   alembic
@@ -117,19 +119,19 @@ toml==0.10.2
     # via
     #   pytest
     #   zappa
-tomli==1.2.2
+tomli==2.0.0
     # via pep517
 tqdm==4.62.3
     # via zappa
-troposphere==3.1.1
+troposphere==3.2.2
     # via zappa
-urllib3==1.26.7
+urllib3==1.26.8
     # via
     #   botocore
     #   requests
 werkzeug==2.0.2
     # via zappa
-wheel==0.37.0
+wheel==0.37.1
     # via
     #   pip-tools
     #   zappa
