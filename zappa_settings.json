@@ -14,9 +14,18 @@
     },
     "events": [
       {
-        "function": "pxsearch.lsl2.process_ls_sns_payload",
+        "function": "pxsearch.ingest.lsl2.process_ls_sns_payload",
         "event_source": {
           "arn": "arn:aws:sns:us-west-2:673253540267:public-c2-notify",
+          "events": [
+            "sns:Publish"
+          ]
+        }
+      },
+      {
+        "function": "pxsearch.ingest.s2l2.process_s2_sns_payload",
+        "event_source": {
+          "arn": "arn:aws:sns:us-west-2:608149789419:cirrus-v0-publish",
           "events": [
             "sns:Publish"
           ]
