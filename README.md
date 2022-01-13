@@ -71,8 +71,14 @@ make check-picky
 # Migrations
 Use alembic to have the migrations and latest version of the database.
 
+To create a new migration use
 ```bash
 alembic migration
+```
+
+To update the database use
+```bash
+alembic upgrade head
 ```
 
 # Deploy staging
