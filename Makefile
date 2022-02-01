@@ -11,7 +11,7 @@ dev_install: install
 	pre-commit install
 	pre-commit install --hook-type commit-msg
 
-upgrade_dependencies: dev_install
+upgrade_dependencies:
 	pip install pip-tools
 	pip-compile --upgrade --output-file ./requirements.txt requirements.in
 	pip-compile --upgrade --output-file ./dev_requirements.txt dev_requirements.in
