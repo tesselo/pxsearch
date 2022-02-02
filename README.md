@@ -118,5 +118,21 @@ from pxsearch.lsl2 import create_collections
 create_collections()
 ```
 
+# Ingest
+
+## LSL2 Ingestor
+There is a cli to ingest data from any STAC api server.
+
+Example for ingesting landsat data:
+```bash
+url=https://landsatlook.usgs.gov/stac-server
+# Ingest all collections from a service.
+python pxsearch/ingest/run.py --stac-url=$url -c
+# Ingest items across all collections for a list of years.
+for year in 1980 1981 1982
+do
+  python pxsearch/ingest/run.py --year-start=$year --stac-url=$url
+done
+```
 
 Copyright 2021 Tesselo - Space Mosaic Lda. All rights reserved.
