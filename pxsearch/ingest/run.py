@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.8
 """
 CLI to ingest data by year from any stac api.
 Example stac api are
