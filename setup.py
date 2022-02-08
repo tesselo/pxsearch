@@ -1,13 +1,13 @@
-import os
-
 from setuptools import find_packages, setup
+
+import pxsearch
 
 with open("requirements.in") as f:
     install_requires = [line for line in f if line and line[0] not in "#-"]
 
 setup(
     name="pxsearch",
-    version=os.getenv("PACKAGE_VERSION") or "0.0.1",
+    version=pxsearch.__version__,
     url="https://github.com/tesselo/pxsearch",
     author="Keren Vasconcelos",
     author_email="keren@tesselo.com",
