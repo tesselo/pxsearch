@@ -29,3 +29,8 @@ def create_imagery_view():
     """
 
     engine.execute(definition)
+
+
+def drop_imagery_view():
+    engine = create_engine(get_connection_url())
+    engine.execute("DROP VIEW data.imagery")
