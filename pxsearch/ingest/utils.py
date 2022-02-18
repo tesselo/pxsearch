@@ -56,13 +56,18 @@ def instantiate_items(
 ) -> Collection[Item]:
     items = []
     for item in data:
+
+        geometry = item.get("geometry")
+        if geometry is not None:
+            geometry = json.dumps(geometry)
+
         items.append(
             Item(
                 id=item["id"],
                 stac_version=item["stac_version"],
                 stac_extensions=item["stac_extensions"],
-                geometry=json.dumps(item["geometry"]),
-                bbox=item["bbox"],
+                geometry=geometry,
+                bbox=item.get("bbox"),
                 properties=item["properties"],
                 assets=item["assets"],
                 collection_id=item["collection"],
