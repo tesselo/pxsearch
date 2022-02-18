@@ -48,8 +48,8 @@ def ingest_year_range(url, start, end, collections):
         if not url or not start:
             raise click.UsageError("To ingest items provide start year.")
         if end is None:
-            end = start + 1
-        for year in range(start, end):
+            end = start
+        for year in range(start, end + 1):
             ingest_stac_year(url, year)
 
 
