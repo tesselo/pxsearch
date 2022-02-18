@@ -157,8 +157,8 @@ jobs:
       - name: Build Batch
         run: |
           pip install awscli
-          cd pxsearch && python setup.py sdist --formats=zip
-          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-staging.zip --body pxsearch/dist/pxsearch-*.zip
+          cd pxsearch && python setup.py sdist --formats=zip && cd ..
+          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-${PACKAGE_VERSION}.zip --body pxsearch/dist/pxsearch-${PACKAGE_VERSION}.zip
           docker build -t 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:staging pxsearch
           aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 595064993071.dkr.ecr.eu-central-1.amazonaws.com
           docker push 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:staging
@@ -205,8 +205,8 @@ jobs:
       - name: Build Batch
         run: |
           pip install awscli
-          cd pxsearch && python setup.py sdist --formats=zip
-          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-production.zip --body pxsearch/dist/pxsearch-*.zip
+          cd pxsearch && python setup.py sdist --formats=zip && cd ..
+          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-${PACKAGE_VERSION}.zip --body pxsearch/dist/pxsearch-${PACKAGE_VERSION}.zip
           docker build -t 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:production pxsearch
           aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 595064993071.dkr.ecr.eu-central-1.amazonaws.com
           docker push 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:production
