@@ -9,3 +9,4 @@ iso8601
 placebo<0.10  # Due to a kappa / zappa conflict
 shapely
 click
+sentry_sdk
