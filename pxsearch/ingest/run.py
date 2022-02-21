@@ -8,6 +8,7 @@ Sentinel-2: https://earth-search.aws.element84.com/v0
 import click
 
 from pxsearch.ingest.stac_api import ingest_stac_collections, ingest_stac_year
+from pxsearch.utils import initialize_sentry_sdk
 
 
 @click.command()
@@ -54,4 +55,5 @@ def ingest_year_range(url, start, end, collections):
 
 
 if __name__ == "__main__":
+    initialize_sentry_sdk()
     ingest_year_range()

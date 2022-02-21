@@ -1,5 +1,7 @@
 import os
 
+import sentry_sdk
+
 
 def get_connection_url() -> str:
     """
@@ -15,4 +17,11 @@ def get_connection_url() -> str:
     return (
         f"postgresql://{postgres_user}:{postgres_pass}@"
         f"{postgres_host}:{postgres_port}/{postgres_dbname}"
+    )
+
+
+def initialize_sentry_sdk() -> None:
+    sentry_sdk.init(
+        os.environ.get("SENTRY_DSN"),
+        traces_sample_rate=1.0,
     )
