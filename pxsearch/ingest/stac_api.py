@@ -27,19 +27,17 @@ def ingest_stac_day(stac_url: str, day: datetime.date) -> None:
     # Get data from all available pages of search result
     page = 1
     features = []
+    requests_session = get_requests_retry_session()
     while True:
-        data = (
-            get_requests_retry_session()
-            .get(
-                stac_search_url,
-                params={
-                    "datetime": str(day),
-                    "limit": 250,
-                    "page": page,
-                },
-            )
-            .json()
+        response = requests_session.get(
+            stac_search_url,
+            params={
+                "datetime": str(day),
+                "limit": 250,
+                "page": page,
+            },
         )
+        data = response.json()
         features += data["features"]
         page += 1
         if is_last_page(data):
