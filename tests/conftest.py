@@ -10,7 +10,10 @@ STAC_TEST_URL = "https://example.com/stac/v0"
 
 @pytest.fixture(scope="session")
 def database_engine():
-    engine = create_engine(get_connection_url())
+    connection_url = get_connection_url()
+    if "localhost" not in connection_url:
+        raise ValueError("Avoiding to run tests in non local database")
+    engine = create_engine(connection_url)
     yield engine
     engine.execute("DROP SCHEMA data CASCADE")
     engine.execute("DROP EXTENSION IF EXISTS postgis")
