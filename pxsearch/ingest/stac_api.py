@@ -16,6 +16,8 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
+INGEST_CHUNK_SIZE = 500
+
 
 def ingest_stac_day(stac_url: str, day: datetime.date) -> None:
     """
@@ -46,8 +48,10 @@ def ingest_stac_day(stac_url: str, day: datetime.date) -> None:
     items = instantiate_items(features)
 
     logger.info(f"Day {day} | commiting {len(items)} items to DB")
-    session.bulk_save_objects(items)
-    session.commit()
+    for i in range(0, len(items), INGEST_CHUNK_SIZE):
+        chunk = items[i : i + INGEST_CHUNK_SIZE]  # noqa: E203
+        session.bulk_save_objects(chunk)
+        session.commit()
 
 
 def ingest_stac_year(stac_url: str, year: int) -> None:
