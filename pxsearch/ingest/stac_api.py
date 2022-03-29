@@ -2,6 +2,8 @@ import datetime
 import logging
 from urllib.parse import urljoin
 
+from requests.exceptions import JSONDecodeError
+
 from pxsearch.db import session
 from pxsearch.db_fixtures import pg_on_conflict_do_nothing  # noqa: F401
 from pxsearch.ingest.utils import (
@@ -17,9 +19,12 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 INGEST_CHUNK_SIZE = 500
+MAX_JSON_DECODE_ERROR_ATTEMPTS = 3
 
 
-def ingest_stac_day(stac_url: str, day: datetime.date) -> None:
+def ingest_stac_day(
+    stac_url: str, day: datetime.date, attempt: int = 0
+) -> None:
     """
     Ingest all STAC items for a single day
     """
@@ -39,7 +44,19 @@ def ingest_stac_day(stac_url: str, day: datetime.date) -> None:
                 "page": page,
             },
         )
-        data = response.json()
+        # Sometimes stac APIs return corrupted json data.
+        try:
+            data = response.json()
+        except JSONDecodeError:
+            if attempt < MAX_JSON_DECODE_ERROR_ATTEMPTS:
+                logger.info(
+                    "Caught JSONDecodeError at {stac_url}"
+                    " for day {day} and attempt {attempt}"
+                )
+                ingest_stac_day(stac_url, day, attempt + 1)
+            else:
+                raise
+
         features += data["features"]
         page += 1
         if is_last_page(data):
