@@ -1,6 +1,7 @@
 import json
 from typing import Collection
 
+import boto3
 import requests
 from dateutil import parser
 from requests.adapters import HTTPAdapter
@@ -101,3 +102,11 @@ def instantiate_collections(
             )
         )
     return collections
+
+
+def open_usgs_landsat_file(key):
+    s3 = boto3.client("s3")
+    item_raw = s3.get_object(
+        Bucket="usgs-landsat", Key=key, RequestPayer="requester"
+    )["Body"]
+    return item_raw

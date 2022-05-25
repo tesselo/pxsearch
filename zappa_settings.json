@@ -1,5 +1,6 @@
 {
   "staging": {
+    "log_level": "WARNING",
     "app_function": "pxsearch.app.main",
     "aws_region": "eu-central-1",
     "apigateway_enabled": false,
@@ -14,7 +15,7 @@
     },
     "events": [
       {
-        "function": "pxsearch.ingest.lsl2.process_ls_sns_payload",
+        "function": "pxsearch.ingest.signals.ingest_usgs_signal",
         "event_source": {
           "arn": "arn:aws:sns:us-west-2:673253540267:public-c2-notify",
           "events": [
@@ -23,18 +24,17 @@
         }
       },
       {
-        "function": "pxsearch.ingest.s2l2.process_s2_sns_payload",
+        "function": "pxsearch.ingest.signals.ingest_s2_signal",
         "event_source": {
           "arn": "arn:aws:sns:us-west-2:608149789419:cirrus-v0-publish",
           "events": [
             "sns:Publish"
           ]
         }
-      }
+      },
     ]
   },
   "production": {
-    "log_level": "WARNING",
     "extends": "staging",
     "project_name": "pxsearch",
     "s3_bucket": "pxsearch-production",
