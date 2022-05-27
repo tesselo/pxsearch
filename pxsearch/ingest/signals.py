@@ -1,5 +1,7 @@
 import json
 
+from botocore.exceptions import ClientError
+
 from pxsearch.db import session
 from pxsearch.ingest.utils import instantiate_items, open_usgs_landsat_file
 
@@ -12,7 +14,12 @@ def ingest_usgs_signal(event, context):
     location = message["s3_location"]
     product = message["landsat_product_id"]
     key = f"{location}{product}_stac.json".replace("s3://usgs-landsat/", "")
-    item_json_str = open_usgs_landsat_file(key).read().decode("utf-8")
+    try:
+        item_json_str = open_usgs_landsat_file(key).read().decode("utf-8")
+    except ClientError:
+        print(message)
+        print(key)
+        raise
     item_json = json.loads(item_json_str)
 
     items = instantiate_items([item_json])

@@ -1,5 +1,6 @@
 {
   "staging": {
+    "keep_warm": false,
     "log_level": "WARNING",
     "app_function": "pxsearch.app.main",
     "aws_region": "eu-central-1",
