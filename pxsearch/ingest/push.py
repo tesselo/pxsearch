@@ -23,22 +23,28 @@ def push_batch_job(
     stac_url,
     start,
     end,
+    already_done,
     depends_on=None,
 ):
+    command = [
+        f"pxsearch-{version}/pxsearch/ingest/run.py",
+        "-u",
+        str(stac_url),
+        "-s",
+        str(start),
+        "-e",
+        str(end),
+    ]
+
+    if already_done:
+        command += ["-d", already_done]
+
     job = {
         "jobName": f"Ingest-{start}-to-{end}-from-STAC-API-{stac_url.split('://')[1].split('/')[0].replace('.', '-')}",  # noqa E501
         "jobQueue": "fetch-and-run-queue",
         "jobDefinition": "pxsearch-ingestion-production",
         "containerOverrides": {
-            "command": [
-                f"pxsearch-{version}/pxsearch/ingest/run.py",
-                "-u",
-                str(stac_url),
-                "-s",
-                str(start),
-                "-e",
-                str(end),
-            ],
+            "command": command,
             "resourceRequirements": [
                 {
                     "type": "MEMORY",
@@ -136,12 +142,23 @@ def push_batch_job(
     type=click.INT,
     required=True,
 )
-def push_batch_jobs_for_date_range(version, url, start, end):
+@click.option(
+    "-d",
+    "--already-done",
+    "already_done",
+    default=None,
+    help="Date up to which the ingestion already is done",
+)
+def push_batch_jobs_for_date_range(version, url, start, end, already_done):
     previous = None
     for year in range(start, end + 1):
         if previous is None:
             previous = push_batch_job(
-                version=version, stac_url=url, start=year, end=year
+                version=version,
+                stac_url=url,
+                start=year,
+                end=year,
+                already_done=already_done,
             )
         else:
             previous = push_batch_job(
@@ -149,6 +166,7 @@ def push_batch_jobs_for_date_range(version, url, start, end):
                 stac_url=url,
                 start=year,
                 end=year,
+                already_done=already_done,
                 depends_on=[previous["jobId"]],
             )
         print(year, previous["jobId"])

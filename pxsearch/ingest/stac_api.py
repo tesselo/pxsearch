@@ -71,14 +71,18 @@ def ingest_stac_day(
         session.commit()
 
 
-def ingest_stac_year(stac_url: str, year: int) -> None:
+def ingest_stac_year(
+    stac_url: str, year: int, already_done: datetime.date = None
+) -> None:
     """
     Ingest all STAC items for a year
     """
     date = datetime.date(year, 1, 1)
+    already_done = already_done or date
     days = []
     while date <= datetime.date(year, 12, 31):
-        days.append(date)
+        if date >= already_done:
+            days.append(date)
         date = date + datetime.timedelta(days=1)
     logger.info(
         f"Starting ingestion of {len(days)} days of data for year {year}"
