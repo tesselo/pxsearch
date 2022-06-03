@@ -23,7 +23,10 @@ MAX_JSON_DECODE_ERROR_ATTEMPTS = 3
 
 
 def ingest_stac_day(
-    stac_url: str, day: datetime.date, attempt: int = 0
+    stac_url: str,
+    day: datetime.date,
+    limit_collections: list = None,
+    attempt: int = 0,
 ) -> None:
     """
     Ingest all STAC items for a single day
@@ -36,13 +39,17 @@ def ingest_stac_day(
     features = []
     requests_session = get_requests_retry_session()
     while True:
-        response = requests_session.get(
+        params = {
+            "datetime": str(day),
+            "limit": 250,
+            "page": page,
+        }
+        if limit_collections:
+            params["collections"] = limit_collections
+
+        response = requests_session.post(
             stac_search_url,
-            params={
-                "datetime": str(day),
-                "limit": 250,
-                "page": page,
-            },
+            json=params,
         )
         # Sometimes stac APIs return corrupted json data.
         try:
@@ -53,7 +60,7 @@ def ingest_stac_day(
                     f"Caught JSONDecodeError at {stac_url}"
                     f" for day {day} and attempt {attempt}"
                 )
-                ingest_stac_day(stac_url, day, attempt + 1)
+                ingest_stac_day(stac_url, day, limit_collections, attempt + 1)
             else:
                 logger.warning(
                     "Caught last JSONDecodeError and skip over"
@@ -75,7 +82,10 @@ def ingest_stac_day(
 
 
 def ingest_stac_year(
-    stac_url: str, year: int, already_done: datetime.date = None
+    stac_url: str,
+    year: int,
+    already_done: datetime.date = None,
+    limit_collections: list = None,
 ) -> None:
     """
     Ingest all STAC items for a year
@@ -91,7 +101,7 @@ def ingest_stac_year(
         f"Starting ingestion of {len(days)} days of data for year {year}"
     )
     for day in days:
-        ingest_stac_day(stac_url, day)
+        ingest_stac_day(stac_url, day, limit_collections)
     logger.info(f"Finished processing all data for year {year}")
 
 

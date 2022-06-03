@@ -24,6 +24,7 @@ def push_batch_job(
     start,
     end,
     already_done,
+    limit_collections,
     depends_on=None,
 ):
     command = [
@@ -38,6 +39,9 @@ def push_batch_job(
 
     if already_done:
         command += ["-d", already_done]
+
+    if limit_collections:
+        command += ["-l", limit_collections]
 
     job = {
         "jobName": f"Ingest-{start}-to-{end}-from-STAC-API-{stac_url.split('://')[1].split('/')[0].replace('.', '-')}",  # noqa E501
@@ -149,7 +153,16 @@ def push_batch_job(
     default=None,
     help="Date up to which the ingestion already is done",
 )
-def push_batch_jobs_for_date_range(version, url, start, end, already_done):
+@click.option(
+    "-l",
+    "--limit-to-collections",
+    "limit_collections",
+    help="Comma separated list of collection ids to use",
+    default="",
+)
+def push_batch_jobs_for_date_range(
+    version, url, start, end, already_done, limit_collections
+):
     previous = None
     for year in range(start, end + 1):
         if previous is None:
@@ -159,6 +172,7 @@ def push_batch_jobs_for_date_range(version, url, start, end, already_done):
                 start=year,
                 end=year,
                 already_done=already_done,
+                limit_collections=limit_collections,
             )
         else:
             previous = push_batch_job(
@@ -167,6 +181,7 @@ def push_batch_jobs_for_date_range(version, url, start, end, already_done):
                 start=year,
                 end=year,
                 already_done=already_done,
+                limit_collections=limit_collections,
                 depends_on=[previous["jobId"]],
             )
         print(year, previous["jobId"])
