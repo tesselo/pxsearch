@@ -32,7 +32,7 @@ def exploding_session(database_engine):
 def setup_stac_requests_mock(requests_mock):
     with open("tests/data/test_item.json") as src:
         item = json.load(src)
-    requests_mock.get(STAC_TEST_URL + "/search", json={"features": [item]})
+    requests_mock.post(STAC_TEST_URL + "/search", json={"features": [item]})
 
     with open("tests/data/test_collection.json") as src:
         collection = json.load(src)
