@@ -50,13 +50,16 @@ def ingest_stac_day(
         except JSONDecodeError:
             if attempt < MAX_JSON_DECODE_ERROR_ATTEMPTS:
                 logger.info(
-                    "Caught JSONDecodeError at {stac_url}"
-                    " for day {day} and attempt {attempt}"
+                    f"Caught JSONDecodeError at {stac_url}"
+                    f" for day {day} and attempt {attempt}"
                 )
                 ingest_stac_day(stac_url, day, attempt + 1)
             else:
-                raise
-
+                logger.warning(
+                    "Caught last JSONDecodeError and skip over"
+                    " Will commit collected items and return"
+                )
+                break
         features += data["features"]
         page += 1
         if is_last_page(data):
