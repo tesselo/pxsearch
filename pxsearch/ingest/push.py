@@ -16,6 +16,9 @@ import os
 
 import boto3
 import click
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 
 def push_batch_job(
@@ -184,7 +187,7 @@ def push_batch_jobs_for_date_range(
                 limit_collections=limit_collections,
                 depends_on=[previous["jobId"]],
             )
-        print(year, previous["jobId"])
+        logger.info("Pushing ingest job", year=year, job_id=previous["jobId"])
 
 
 if __name__ == "__main__":
