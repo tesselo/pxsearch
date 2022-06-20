@@ -21,7 +21,8 @@ def get_connection_url() -> str:
 
 
 def initialize_sentry_sdk() -> None:
-    sentry_sdk.init(
-        os.environ.get("SENTRY_DSN"),
-        traces_sample_rate=1.0,
-    )
+    if "SENTRY_DSN" in os.environ:
+        sentry_sdk.init(
+            os.environ.get("SENTRY_DSN"),
+            traces_sample_rate=1.0,
+        )

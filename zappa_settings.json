@@ -12,7 +12,8 @@
     "environment_variables": {
       "POSTGRES_HOST": "search-micro.cepyvetzz6ui.eu-central-1.rds.amazonaws.com",
       "POSTGRES_DBNAME": "staging",
-      "POSGRES_PORT": "5432"
+      "POSGRES_PORT": "5432",
+      "SENTRY_DSN": "https://d8c1399a37c44cd2ae228dfb13fa800a@o640190.ingest.sentry.io/6167701"
     },
     "events": [
       {
