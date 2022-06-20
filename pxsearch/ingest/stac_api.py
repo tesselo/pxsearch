@@ -1,7 +1,7 @@
 import datetime
-import logging
 from urllib.parse import urljoin
 
+import structlog
 from requests.exceptions import JSONDecodeError
 
 from pxsearch.db import session
@@ -14,9 +14,8 @@ from pxsearch.ingest.utils import (
     is_last_page,
 )
 
-logging.basicConfig(level=logging.INFO)
+logger = structlog.get_logger(__name__)
 
-logger = logging.getLogger(__name__)
 
 INGEST_CHUNK_SIZE = 500
 MAX_JSON_DECODE_ERROR_ATTEMPTS = 3
