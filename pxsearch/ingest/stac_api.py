@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 from urllib.parse import urljoin
 
 import structlog
@@ -6,7 +7,9 @@ from requests.exceptions import JSONDecodeError
 
 from pxsearch.db import session
 from pxsearch.db_fixtures import pg_on_conflict_do_nothing  # noqa: F401
+from pxsearch.ingest.const import INGEST_CHUNK_SIZE, MAX_DECODE_ERROR_ATTEMPTS
 from pxsearch.ingest.utils import (
+    create_ingest_intervals,
     ensure_trailing_slash,
     get_requests_retry_session,
     instantiate_collections,
@@ -17,18 +20,15 @@ from pxsearch.ingest.utils import (
 logger = structlog.get_logger(__name__)
 
 
-INGEST_CHUNK_SIZE = 500
-MAX_JSON_DECODE_ERROR_ATTEMPTS = 3
-
-
-def ingest_stac_day(
+def ingest_stac_interval(
     stac_url: str,
-    day: datetime.date,
-    limit_collections: list = None,
+    interval: str,
+    limit_collections: Optional[list] = None,
+    split_day: Optional[int] = None,
     attempt: int = 0,
 ) -> None:
     """
-    Ingest all STAC items for a single day
+    Ingest all STAC items for a time interval
     """
     # Build search url
     stac_search_url = urljoin(ensure_trailing_slash(stac_url), "search")
@@ -39,7 +39,7 @@ def ingest_stac_day(
     requests_session = get_requests_retry_session()
     while True:
         params = {
-            "datetime": str(day),
+            "datetime": interval,
             "limit": 250,
             "page": page,
         }
@@ -54,12 +54,18 @@ def ingest_stac_day(
         try:
             data = response.json()
         except JSONDecodeError:
-            if attempt < MAX_JSON_DECODE_ERROR_ATTEMPTS:
+            if attempt < MAX_DECODE_ERROR_ATTEMPTS:
                 logger.info(
                     f"Caught JSONDecodeError at {stac_url}"
-                    f" for day {day} and attempt {attempt}"
+                    f" for interval {interval} and attempt {attempt}"
                 )
-                ingest_stac_day(stac_url, day, limit_collections, attempt + 1)
+                ingest_stac_interval(
+                    stac_url=stac_url,
+                    interval=interval,
+                    limit_collections=limit_collections,
+                    split_day=split_day,
+                    attempt=attempt + 1,
+                )
             else:
                 logger.warning(
                     "Caught last JSONDecodeError and skip over"
@@ -73,7 +79,7 @@ def ingest_stac_day(
 
     items = instantiate_items(features)
 
-    logger.info(f"Day {day} | commiting {len(items)} items to DB")
+    logger.info(f"Interval {interval} | commiting {len(items)} items to DB")
     for i in range(0, len(items), INGEST_CHUNK_SIZE):
         chunk = items[i : i + INGEST_CHUNK_SIZE]  # noqa: E203
         session.bulk_save_objects(chunk)
@@ -83,24 +89,23 @@ def ingest_stac_day(
 def ingest_stac_year(
     stac_url: str,
     year: int,
-    already_done: datetime.date = None,
-    limit_collections: list = None,
+    already_done: Optional[datetime.datetime] = None,
+    split_day: Optional[int] = None,
+    limit_collections: Optional[list] = None,
 ) -> None:
     """
     Ingest all STAC items for a year
     """
-    date = datetime.date(year, 1, 1)
-    already_done = already_done or date
-    days = []
-    while date <= datetime.date(year, 12, 31):
-        if date >= already_done:
-            days.append(date)
-        date = date + datetime.timedelta(days=1)
-    logger.info(
-        f"Starting ingestion of {len(days)} days of data for year {year}"
+    intervals = create_ingest_intervals(
+        year=year, already_done=already_done, split_day=split_day
     )
-    for day in days:
-        ingest_stac_day(stac_url, day, limit_collections)
+    logger.info(
+        f"Starting ingestion of {len(intervals)} "
+        f"{'day splits' if split_day else 'days'} "
+        f"of data for year {year}"
+    )
+    for interval in intervals:
+        ingest_stac_interval(stac_url, interval, limit_collections, split_day)
     logger.info(f"Finished processing all data for year {year}")
 
 

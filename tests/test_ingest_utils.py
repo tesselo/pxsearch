@@ -1,6 +1,8 @@
+import datetime
 import json
 
 from pxsearch.ingest.utils import (
+    create_ingest_intervals,
     ensure_trailing_slash,
     get_requests_retry_session,
     instantiate_collections,
@@ -53,3 +55,21 @@ def test_load_collection(test_db_session):
     collections = instantiate_collections([collection, collection])
     assert len(collections) == 2
     assert collections[0].id == "test-collection"
+
+
+def test_create_ingest_intervals():
+    result = create_ingest_intervals(
+        2020, already_done=datetime.datetime(2020, 12, 29), split_day=3
+    )
+    expected = [
+        "2020-12-29T00:00:00Z/2020-12-29T08:00:00Z",
+        "2020-12-29T08:00:00Z/2020-12-29T16:00:00Z",
+        "2020-12-29T16:00:00Z/2020-12-30T00:00:00Z",
+        "2020-12-30T00:00:00Z/2020-12-30T08:00:00Z",
+        "2020-12-30T08:00:00Z/2020-12-30T16:00:00Z",
+        "2020-12-30T16:00:00Z/2020-12-31T00:00:00Z",
+        "2020-12-31T00:00:00Z/2020-12-31T08:00:00Z",
+        "2020-12-31T08:00:00Z/2020-12-31T16:00:00Z",
+        "2020-12-31T16:00:00Z/2021-01-01T00:00:00Z",
+    ]
+    assert result == expected
