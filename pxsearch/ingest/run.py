@@ -57,8 +57,21 @@ from pxsearch.utils import initialize_sentry_sdk
     help="Comma separated list of collection ids to use",
     default="",
 )
+@click.option(
+    "-sp",
+    "--split-day",
+    "split_day",
+    help="Split daily ingestion in N parts",
+    default=None,
+)
 def ingest_year_range(
-    url, start, end, collections, already_done, limit_collections
+    url,
+    start,
+    end,
+    collections,
+    already_done,
+    limit_collections,
+    split_day,
 ):
 
     if collections:
@@ -71,9 +84,17 @@ def ingest_year_range(
         if end is None:
             end = start
         if already_done:
-            already_done = parser.parse(already_done).date()
+            already_done = parser.parse(already_done)
+        if split_day:
+            split_day = int(split_day)
         for year in range(start, end + 1):
-            ingest_stac_year(url, year, already_done, limit_collections)
+            ingest_stac_year(
+                stac_url=url,
+                year=year,
+                already_done=already_done,
+                split_day=split_day,
+                limit_collections=limit_collections,
+            )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
+import datetime
 import json
-from typing import Collection
+from typing import Collection, Iterable
 
 import boto3
 import requests
@@ -7,6 +8,7 @@ from dateutil import parser
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
+from pxsearch.ingest.const import ONE_DAY, STAC_SEARCH_DATETIME_FORMAT
 from pxsearch.models.stac import Collection as CollectionModel
 from pxsearch.models.stac import Item
 
@@ -110,3 +112,24 @@ def open_usgs_landsat_file(key):
         Bucket="usgs-landsat", Key=key, RequestPayer="requester"
     )["Body"]
     return item_raw
+
+
+def create_ingest_intervals(
+    year: int, already_done: datetime.datetime, split_day: int
+) -> Iterable[datetime.datetime]:
+    date = datetime.datetime(year, 1, 1)
+    already_done = already_done or date
+    intervals = []
+    while date <= datetime.datetime(year, 12, 31):
+        if date >= already_done:
+            if split_day:
+                for i in range(split_day):
+                    start = date + i * ONE_DAY / split_day
+                    start = start.strftime(STAC_SEARCH_DATETIME_FORMAT)
+                    end = date + (i + 1) * ONE_DAY / split_day
+                    end = end.strftime(STAC_SEARCH_DATETIME_FORMAT)
+                    intervals.append(f"{start}/{end}")
+            else:
+                intervals.append(str(date.date()))
+        date = date + ONE_DAY
+    return intervals

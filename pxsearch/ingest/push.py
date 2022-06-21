@@ -28,6 +28,7 @@ def push_batch_job(
     end,
     already_done,
     limit_collections,
+    split_day=None,
     depends_on=None,
 ):
     command = [
@@ -45,6 +46,9 @@ def push_batch_job(
 
     if limit_collections:
         command += ["-l", limit_collections]
+
+    if split_day:
+        command += ["-sp", split_day]
 
     job = {
         "jobName": f"Ingest-{start}-to-{end}-from-STAC-API-{stac_url.split('://')[1].split('/')[0].replace('.', '-')}",  # noqa E501
@@ -163,8 +167,21 @@ def push_batch_job(
     help="Comma separated list of collection ids to use",
     default="",
 )
+@click.option(
+    "-sp",
+    "--split-day",
+    "split_day",
+    help="Split daily ingestion in N parts",
+    default=None,
+)
 def push_batch_jobs_for_date_range(
-    version, url, start, end, already_done, limit_collections
+    version,
+    url,
+    start,
+    end,
+    already_done,
+    limit_collections,
+    split_day,
 ):
     previous = None
     for year in range(start, end + 1):
@@ -176,6 +193,7 @@ def push_batch_jobs_for_date_range(
                 end=year,
                 already_done=already_done,
                 limit_collections=limit_collections,
+                split_day=split_day,
             )
         else:
             previous = push_batch_job(
@@ -185,6 +203,7 @@ def push_batch_jobs_for_date_range(
                 end=year,
                 already_done=already_done,
                 limit_collections=limit_collections,
+                split_day=split_day,
                 depends_on=[previous["jobId"]],
             )
         logger.info("Pushing ingest job", year=year, job_id=previous["jobId"])
