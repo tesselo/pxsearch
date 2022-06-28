@@ -7,12 +7,6 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
-    inputs:
-      sure:
-        description: 'Are you sure to deploy this thing to production?'
-        required: true
-        default: 'Not really'
 
 jobs:
   static_checks:
@@ -129,59 +123,10 @@ jobs:
           POSTGRES_PASS: postgres_password
           POSTGRES_PORT: ${{ job.services.postgres.ports[5432] }}
 
-  deploy-staging:
-    name: Deploy to Staging
-    needs: [python_dependencies, static_checks, test]
-    runs-on: ubuntu-latest
-    if: contains('refs/heads/main', github.ref)
-    steps:
-      - name: Checkout pxsearch
-        uses: actions/checkout@v2
-        with:
-          path: ./pxsearch
-      - name: Attempt to use cache
-        uses: actions/cache@v2
-        id: cache
-        with:
-          path: ./pxsearch-venv
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/*requirements.txt') }}
-      - name: Deploy
-        run: |
-          source ./pxsearch-venv/bin/activate
-          cd ./pxsearch
-          zappa update staging --disable_progress
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          PACKAGE_VERSION: ${{ github.sha }}
-      - name: Build Batch
-        run: |
-          pip install awscli
-          cd pxsearch && python setup.py sdist --formats=zip && cd ..
-          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-${PACKAGE_VERSION}.zip --body pxsearch/dist/pxsearch-${PACKAGE_VERSION}.zip
-          docker build -t 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:staging pxsearch
-          aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 595064993071.dkr.ecr.eu-central-1.amazonaws.com
-          docker push 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:staging
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          PACKAGE_VERSION: ${{ github.sha }}
-      - name: Sentry Release
-        uses: tesselo/release-action@main
-        with:
-          sentry_project: pxsearch
-          sentry_environment: 'staging'
-          sentry_release: ${{ github.sha }}
-          code_dir: 'pxsearch'
-        env:
-          SENTRY_ORG: 'tesselo'
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
   deploy-production:
     name: Deploy to Production
     needs: [python_dependencies, static_checks, test]
     runs-on: ubuntu-latest
-    if: contains('yes', github.event.inputs.sure) && contains('workflow_dispatch', github.event_name)
     steps:
       - name: Checkout pxsearch
         uses: actions/checkout@v2
