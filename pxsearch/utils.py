@@ -1,6 +1,8 @@
+import logging
 import os
 
 import sentry_sdk
+from kw.structlog_config import configure_stdlib_logging, configure_structlog
 
 
 def get_connection_url() -> str:
@@ -18,6 +20,17 @@ def get_connection_url() -> str:
         f"postgresql://{postgres_user}:{postgres_pass}@"
         f"{postgres_host}:{postgres_port}/{postgres_dbname}"
     )
+
+
+def configure_logging() -> None:
+    debug = os.environ.get("DEBUG", False)
+    configure_structlog(debug=debug, timestamp_format="iso")
+    configure_stdlib_logging(
+        debug=debug, timestamp_format="iso", level=logging.INFO
+    )
+
+    # Stop the SPAM from botocore
+    logging.getLogger("botocore.credentials").setLevel(logging.ERROR)
 
 
 def initialize_sentry_sdk() -> None:
