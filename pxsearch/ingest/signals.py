@@ -1,11 +1,23 @@
 import json
 
 from pxsearch.db import session
+from pxsearch.ingest.const import SENTINEL_2_SNS_ARN, USGS_SNS_ARN
 from pxsearch.ingest.utils import instantiate_items, open_usgs_landsat_file
 from pxsearch.utils import configure_instrumentation
 
 
-def ingest_usgs_signal(event, context):
+def signal_handler(event, context):
+    arn = event["Records"][0]["Sns"]["TopicArn"]
+
+    if arn == SENTINEL_2_SNS_ARN:
+        ingest_s2_signal(event)
+    elif arn == USGS_SNS_ARN:
+        ingest_usgs_signal(event)
+    else:
+        raise ValueError(f"Could not handle SNS event {event}")
+
+
+def ingest_usgs_signal(event):
     """
     Ingest data from an usgs-landsat bucket event.
     """
@@ -23,7 +35,7 @@ def ingest_usgs_signal(event, context):
     session.commit()
 
 
-def ingest_s2_signal(event, context):
+def ingest_s2_signal(event):
     """
     Ingest data from a S2 L2A bucket event.
     """

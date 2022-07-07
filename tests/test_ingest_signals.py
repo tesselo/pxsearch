@@ -27,7 +27,7 @@ def test_ingest_item_from_signal():
     setup_collections()
     with open("tests/data/test_signal_usgs.json") as src:
         event = json.load(src)
-    ingest_usgs_signal(event, None)
+    ingest_usgs_signal(event)
     db_result = session.query(Item).all()
     assert len(db_result) == 1
 
@@ -36,6 +36,6 @@ def test_ingest_item_from_s2_signal():
     setup_collections()
     with open("tests/data/test_signal_s2.json") as src:
         event = json.load(src)
-    ingest_s2_signal(event, None)
+    ingest_s2_signal(event)
     db_result = session.query(Item).all()
     assert len(db_result) == 1
