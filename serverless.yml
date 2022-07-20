@@ -7,11 +7,12 @@ provider:
   runtime: python3.8
   region: eu-central-1
   environment:
-    POSTGRES_HOST: "search-micro.cepyvetzz6ui.eu-central-1.rds.amazonaws.com"
+    POSTGRES_HOST: ${file(./secretsHandler.js):getParameters.POSTGRES_HOST}
     POSGRES_PORT: "5432"
-    POSTGRES_DBNAME: "prod"
-    POSTGRES_USER: "arthur"
-    SENTRY_DSN: "https://d8c1399a37c44cd2ae228dfb13fa800a@o640190.ingest.sentry.io/616770"
+    POSTGRES_DBNAME: ${file(./secretsHandler.js):getParameters.POSTGRES_DBNAME}
+    POSTGRES_USER: ${file(./secretsHandler.js):getParameters.POSTGRES_USER}
+    POSTGRES_PASS: ${file(./secretsHandler.js):getParameters.POSTGRES_PASS}
+    SENTRY_DSN: ${file(./secretsHandler.js):getParameters.SENTRY_DSN}
 
 package:
   patterns: pxsearch
