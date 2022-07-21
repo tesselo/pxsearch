@@ -69,6 +69,11 @@ jobs:
     if: contains('refs/heads/main', github.ref)
     steps:
       - uses: actions/checkout@v3
+      - uses: snok/install-poetry@v1
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'poetry'
       - uses: actions/setup-node@v3
         with:
           node-version: 16
