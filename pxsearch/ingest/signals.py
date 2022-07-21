@@ -1,6 +1,7 @@
 import json
 
 from pxsearch.db import session
+from pxsearch.db_fixtures import pg_on_conflict_do_nothing  # noqa: F401
 from pxsearch.ingest.const import SENTINEL_2_SNS_ARN, USGS_SNS_ARN
 from pxsearch.ingest.utils import instantiate_items, open_usgs_landsat_file
 from pxsearch.utils import configure_instrumentation
