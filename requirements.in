@@ -9,3 +9,5 @@ shapely
 click
 sentry_sdk
 kiwi-structlog-config
+boto3
+requests
