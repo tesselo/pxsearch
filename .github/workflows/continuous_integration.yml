@@ -127,6 +127,7 @@ jobs:
     name: Deploy to Production
     needs: [static_checks, test]
     runs-on: ubuntu-latest
+    if: contains('refs/heads/main', github.ref)
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
