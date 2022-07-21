@@ -7,6 +7,17 @@ The restructuring of the project in this branch aims to:
 - Update our indexing processes using datasets from AWS S3 inventory;
 - Restructure the database using STAC specifications(https://stacspec.org/) and SqlAlchemy ORM;
 
+
+## Install poetry
+Python-poetry is installed only once globally. To install, run
+```
+curl -sSL https://install.python-poetry.org | python -
+```
+and add the follwing to your bashrc
+```
+export PATH=$PATH:$HOME/.poetry/bin
+```
+
 ## Install runtime dependencies
 
 ```

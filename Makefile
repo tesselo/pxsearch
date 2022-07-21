@@ -4,17 +4,15 @@
 .PHONY: cli_install install upgrade_dependencies
 
 install:
-	pip install -r requirements.txt
+	poetry install --no-dev
 
-dev_install: install
-	pip install -r dev_requirements.txt
+dev_install:
+	poetry install
 	pre-commit install
 	pre-commit install --hook-type commit-msg
 
 upgrade_dependencies:
-	pip install pip-tools
-	pip-compile --upgrade --output-file ./requirements.txt requirements.in
-	pip-compile --upgrade --output-file ./dev_requirements.txt dev_requirements.in
+	poetry upgrade
 
 #
 #   Code Checks
@@ -25,7 +23,7 @@ pre-commit:
 	pre-commit run -a
 
 coverage:
-	pytest --alembic-folder=alembic --cov=pxsearch --cov-report term --cov-report html:reports/coverage-integration --cov-report term:skip-covered
+	poetry run pytest --alembic-folder=alembic --cov=pxsearch --cov-report term --cov-report html:reports/coverage-integration --cov-report term:skip-covered
 
 
 check: pre-commit coverage
