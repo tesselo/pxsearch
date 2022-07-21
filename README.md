@@ -81,32 +81,10 @@ To update the database use
 alembic upgrade head
 ```
 
-# Deploy staging
+# Deploy
 
 ```bash
-zappa update staging
-```
-
-# Invoke staging
-
-```bash
-zappa invoke staging "pxsearch.app.main"
-```
-
-```
-alembic migration
-```
-
-# Deploy staging
-
-```bash
-zappa update staging
-```
-
-# Invoke staging
-
-```bash
-zappa invoke staging "pxsearch.app.main"
+serverless deploy
 ```
 
 # DB Setup

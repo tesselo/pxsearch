@@ -1,0 +1,29 @@
+service: pxsearch
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: eu-central-1
+  environment:
+    POSTGRES_HOST: "search-micro.cepyvetzz6ui.eu-central-1.rds.amazonaws.com"
+    POSGRES_PORT: "5432"
+    POSTGRES_DBNAME: "prod"
+    POSTGRES_USER: "arthur"
+    SENTRY_DSN: "https://d8c1399a37c44cd2ae228dfb13fa800a@o640190.ingest.sentry.io/616770"
+
+package:
+  patterns: pxsearch
+
+functions:
+  pxsearch:	
+    name: pxsearch
+    handler: "pxsearch.ingest.signals.signal_handler"
+    events:	
+      - externalSNS: "arn:aws:sns:us-west-2:673253540267:public-c2-notify"
+      - externalSNS: "arn:aws:sns:us-west-2:608149789419:cirrus-v0-publish"
+
+plugins:
+  - serverless-python-requirements
+  - serverless-plugin-external-sns-events
