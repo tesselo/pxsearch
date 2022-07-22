@@ -1,5 +1,6 @@
 import json
 
+import sentry_sdk
 import structlog
 
 from pxsearch.db import session
@@ -11,14 +12,21 @@ logger = structlog.get_logger(__name__)
 
 
 def signal_handler(event, context):
-    arn = event["Records"][0]["Sns"]["TopicArn"]
+    try:
+        arn = event["Records"][0]["Sns"]["TopicArn"]
 
-    if arn == SENTINEL_2_SNS_ARN:
-        ingest_s2_signal(event)
-    elif arn == USGS_SNS_ARN:
-        ingest_usgs_signal(event)
-    else:
-        raise ValueError(f"Could not handle SNS event {event}")
+        if arn == SENTINEL_2_SNS_ARN:
+            ingest_s2_signal(event)
+        elif arn == USGS_SNS_ARN:
+            ingest_usgs_signal(event)
+        else:
+            raise ValueError(f"Could not handle SNS event {event}")
+    except Exception as e:
+        logger.error(
+            "Captured Exception in the all catching signal_handler",
+            exception=e,
+        )
+        sentry_sdk.capture_exception(e)
 
 
 def ingest_usgs_signal(event):
