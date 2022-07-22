@@ -2,7 +2,6 @@ import logging
 import os
 
 import sentry_sdk
-import structlog
 from kw.structlog_config import configure_stdlib_logging, configure_structlog
 
 
@@ -40,9 +39,3 @@ def initialize_sentry_sdk() -> None:
             os.environ.get("SENTRY_DSN"),
             traces_sample_rate=1.0,
         )
-
-
-def configure_instrumentation():
-    configure_logging()
-    initialize_sentry_sdk()
-    return structlog.get_logger(__name__)
