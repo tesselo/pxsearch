@@ -15,6 +15,14 @@ provider:
     POSTGRES_USER: ${file(./secretsHandler.js):getParameters.POSTGRES_USER}
     POSTGRES_PASS: ${file(./secretsHandler.js):getParameters.POSTGRES_PASS}
     SENTRY_DSN: ${file(./secretsHandler.js):getParameters.SENTRY_DSN}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - 's3:GetObject'
+          Resource:
+            - 'arn:aws:s3:::usgs-landsat/*'
 
 package:
   patterns: pxsearch
