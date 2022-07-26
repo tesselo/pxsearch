@@ -9,7 +9,7 @@ profile = "black"
 name = "pxsearch"
 version = "0.1.0"
 description = "Open EO data STAC catalog"
-authors = ["Daniel Wiesmann <daniel@tesselo.com>"]
+authors = ["Tesselo Tech Team <tesseras@tesselo.com>"]
 packages = [
     {include = "pxsearch"}
 ]
