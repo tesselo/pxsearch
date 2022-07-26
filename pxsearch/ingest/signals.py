@@ -27,6 +27,7 @@ def signal_handler(event, context):
             exception=e,
         )
         sentry_sdk.capture_exception(e)
+        raise e
 
 
 def ingest_usgs_signal(event):
