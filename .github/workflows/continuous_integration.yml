@@ -88,8 +88,8 @@ jobs:
       - name: Build Batch
         run: |
           pip install awscli
-          python setup.py sdist --formats=zip
-          aws s3api put-object --bucket tesselo-pixels-scripts --key pxsearch-${PACKAGE_VERSION}.zip --body dist/pxsearch-${PACKAGE_VERSION}.zip
+          poetry build
+          aws s3 cp dist/pxsearch-*.tar.gz s3://tesselo-pixels-scripts/pxsearch-${PACKAGE_VERSION}.tar.gz
           docker build -t 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:production .
           aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 595064993071.dkr.ecr.eu-central-1.amazonaws.com
           docker push 595064993071.dkr.ecr.eu-central-1.amazonaws.com/tesselo-pxsearch:production
