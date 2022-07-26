@@ -100,7 +100,7 @@ fetch_and_run_zip () {
 
   # Create a temporary directory and unpack the zip file
   cd "${TMPDIR}" || error_exit "Unable to cd to temporary directory."
-  unzip -q "${TMPFILE}" || error_exit "Failed to unpack zip file."
+  tar -xvzf "${TMPFILE}" || error_exit "Failed to unpack tar gz file."
 
   # Use first argument as script name and pass the rest to the script
   local script="./${1}"; shift

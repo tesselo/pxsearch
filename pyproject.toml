@@ -6,10 +6,17 @@ target-version = ['py38']
 profile = "black"
 
 [tool.poetry]
-name = "\u001b[A\u001b[B"
+name = "pxsearch"
 version = "0.1.0"
-description = ""
+description = "Open EO data STAC catalog"
 authors = ["Daniel Wiesmann <daniel@tesselo.com>"]
+packages = [
+    {include = "pxsearch"}
+]
+classifiers = [
+    "Private :: Do Not Upload",
+    "Operating System :: OS Independent"
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
