@@ -11,14 +11,15 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 ENV PATH=/usr/local/bin:$PATH
 
 # Disable virtualenv for docker
-RUN poetry config virtualenvs.create false --local
+RUN /root/.local/bin/poetry config virtualenvs.create false --local
 
 # Add poetry requirements lock
 ADD poetry.lock pyproject.toml ./
 
 # Install
 RUN pip install awscli &&\
-    poetry install --no-dev
+    /root/.local/bin/poetry export --without-hashes > requirements.txt && \
+    pip install -r requirements.txt
 
 # Fetch-and-run setup
 # https://aws.amazon.com/blogs/compute/creating-a-simple-fetch-and-run-aws-batch-job/
