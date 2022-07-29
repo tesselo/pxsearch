@@ -135,7 +135,7 @@ def create_ingest_intervals(
     return intervals
 
 
-def list_usgs_landsat_stac_items(prefix: str) -> List[AnyStr]:
+def list_usgs_landsat_stac_prefixes(prefix: str) -> List[AnyStr]:
     s3 = boto3.resource("s3")
     paginator = s3.meta.client.get_paginator("list_objects_v2")
     paginated = paginator.paginate(
@@ -151,4 +151,7 @@ def list_usgs_landsat_stac_items(prefix: str) -> List[AnyStr]:
             if f["Key"].endswith("_stac.json")
         ]
         filtered_objects += objs
-    return filtered_objects
+    filtered_keys = [
+        obj.replace("s3://usgs-landsat/", "") for obj in filtered_objects
+    ]
+    return filtered_keys
