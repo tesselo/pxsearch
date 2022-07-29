@@ -10,6 +10,10 @@ item_data_mock = MagicMock(
     return_value=open("tests/data/test_item.json", "rb")
 )
 
+item_list_mock = MagicMock(
+    return_value=["s3://usgs-landsat/path/to/some/stacitem_stac.json"]
+)
+
 
 def setup_collections():
     """
@@ -22,6 +26,7 @@ def setup_collections():
     session.commit()
 
 
+@patch("pxsearch.ingest.signals.list_usgs_landsat_stac_items", item_list_mock)
 @patch("pxsearch.ingest.signals.open_usgs_landsat_file", item_data_mock)
 def test_ingest_item_from_signal():
     setup_collections()
