@@ -6,7 +6,11 @@ import structlog
 from pxsearch.db import session
 from pxsearch.db_fixtures import pg_on_conflict_do_nothing  # noqa: F401
 from pxsearch.ingest.const import SENTINEL_2_SNS_ARN, USGS_SNS_ARN
-from pxsearch.ingest.utils import instantiate_items, open_usgs_landsat_file
+from pxsearch.ingest.utils import (
+    instantiate_items,
+    list_usgs_landsat_stac_items,
+    open_usgs_landsat_file,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -35,14 +39,16 @@ def ingest_usgs_signal(event):
     Ingest data from an usgs-landsat bucket event.
     """
     message = json.loads(event["Records"][0]["Sns"]["Message"])
-    location = message["s3_location"]
-    product = message["landsat_product_id"]
-    logger.debug(f"Ingesting landsat scene {product}")
-    key = f"{location}{product}_stac.json".replace("s3://usgs-landsat/", "")
-    item_json_str = open_usgs_landsat_file(key).read().decode("utf-8")
-    item_json = json.loads(item_json_str)
+    prefix = message["s3_location"].replace("s3://usgs-landsat/", "")
+    stac_item_uris = list_usgs_landsat_stac_items(prefix)
 
-    items = instantiate_items([item_json])
+    stac_item_jsons = []
+    for item in stac_item_uris:
+        item_json_str = open_usgs_landsat_file(item).read().decode("utf-8")
+        item_json = json.loads(item_json_str)
+        stac_item_jsons.append(item_json)
+
+    items = instantiate_items(stac_item_jsons)
     session.bulk_save_objects(items)
     session.commit()
 

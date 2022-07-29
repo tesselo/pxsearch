@@ -1,6 +1,6 @@
 import datetime
 import json
-from typing import Collection, Iterable
+from typing import AnyStr, Collection, Iterable, List
 
 import boto3
 import requests
@@ -133,3 +133,20 @@ def create_ingest_intervals(
                 intervals.append(str(date.date()))
         date = date + ONE_DAY
     return intervals
+
+
+def list_usgs_landsat_stac_items(prefix: str) -> List[AnyStr]:
+    s3 = boto3.resource("s3")
+    paginator = s3.meta.client.get_paginator("list_objects_v2")
+    paginated = paginator.paginate(Bucket="usgs-landsat", Prefix=prefix)
+
+    all_objects = [ob["Contents"] for ob in paginated if "Contents" in ob]
+    filtered_objects = []
+    for object_group in all_objects:
+        objs = [
+            "s3://usgs-landsat/" + f["Key"]
+            for f in object_group
+            if f["Key"].endswith("_stac.json")
+        ]
+        filtered_objects += objs
+    return filtered_objects
