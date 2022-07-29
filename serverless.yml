@@ -22,8 +22,10 @@ provider:
           Action:
             - 's3:GetObject'
             - 's3:ListBucket'
+            - 's3:GetBucketLocation'
           Resource:
             - 'arn:aws:s3:::usgs-landsat/*'
+            - 'arn:aws:s3:::usgs-landsat'
 
 package:
   patterns: pxsearch
