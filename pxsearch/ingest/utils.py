@@ -138,7 +138,9 @@ def create_ingest_intervals(
 def list_usgs_landsat_stac_items(prefix: str) -> List[AnyStr]:
     s3 = boto3.resource("s3")
     paginator = s3.meta.client.get_paginator("list_objects_v2")
-    paginated = paginator.paginate(Bucket="usgs-landsat", Prefix=prefix)
+    paginated = paginator.paginate(
+        Bucket="usgs-landsat", Prefix=prefix, RequestPayer="requester"
+    )
 
     all_objects = [ob["Contents"] for ob in paginated if "Contents" in ob]
     filtered_objects = []
